@@ -164,6 +164,15 @@ class Record(Block, Nestable):
     def structure_size(buf, offset, parent):
         return read_dword(buf, offset)
 
+    def computer_name(self):
+        source_buf = self.unpack_binary(0x38, self.length() - 0x38)
+        index1 = [source_buf[i:i + 2] for i in range(0, len(source_buf), 2)].index('\x00\x00')
+        try:
+            end = 2 * (index1 + 1 + [source_buf[i:i + 2] for i in range(2 * index1 + 2, len(source_buf), 2)].index('\x00\x00'))
+        except ValueError:  # Not null terminated
+            end = len(source_buf)
+        return source_buf[index1 * 2 + 2: end].decode('utf-16le')
+
     def __len__(self):
         return self.length()
 
