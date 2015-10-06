@@ -228,7 +228,7 @@ class EvtCarver(object):
                         break
                     else:
                         buf_offset = index + 1
-                        coninue
+                        continue
 
                 length = struct.unpack_from("<I", buf, index - 4)[0]
 
@@ -238,7 +238,7 @@ class EvtCarver(object):
                     buf_offset = index + 1
                     continue
 
-                if length > self._maxrecord:
+                if length > min(self._maxrecord, len(buf)):
                     self._logger.debug("%x: record too big", file_offset + index)
                     self._status.too_big += 1
                     buf_offset = index + 1
